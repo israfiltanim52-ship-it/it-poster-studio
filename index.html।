@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#173b2b">
+<title>IT Poster Studio</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f5f1e8;color:#25251f;font-family:Arial,"Noto Sans Bengali",sans-serif}
+header{background:#173b2b;color:white;padding:20px 16px;border-radius:0 0 22px 22px}
+header h2{margin:0;font-size:23px}
+header p{margin:7px 0 0;color:#e5d6a2;font-size:13px}
+main{padding:16px;max-width:650px;margin:auto}
+h3{margin:20px 0 12px}
+.card{background:white;padding:15px;border-radius:15px;margin-bottom:14px;box-shadow:0 3px 12px #0000000b}
+button{border:0;border-radius:10px;padding:12px 15px;background:#173b2b;color:white;font-size:14px;cursor:pointer}
+button.secondary{background:#eee8dc;color:#333}
+button.gold{background:#c49a42;color:#1e211b}
+input,textarea,select{width:100%;padding:12px;border:1px solid #ddd5c8;border-radius:9px;margin:6px 0 12px;font-size:15px;background:#fff}
+textarea{min-height:75px;resize:vertical}
+label{font-size:13px;font-weight:bold}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{flex:1}
+#poster{width:100%;aspect-ratio:4/5;background:#173b2b;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:10px;margin:12px 0}
+#poster canvas{width:100%;height:100%;object-fit:contain}
+small{color:#777}
+nav{position:sticky;bottom:0;background:white;padding:10px;display:flex;justify-content:space-around;box-shadow:0 -2px 12px #0001}
+nav button{background:transparent;color:#173b2b;padding:8px;font-size:12px}
+.hidden{display:none}
+#imagePreview{max-width:100%;max-height:150px;display:none;margin:5px auto}
+</style>
+</head>
+<body>
+<header>
+  <h2>✦ IT Poster Studio</h2>
+  <p>আপনার সৃজনশীলতার নিজস্ব ডিজাইন স্টুডিও</p>
+</header>
+
+<main>
+<section id="home">
+  <div class="card">
+    <h2>স্বাগতম!</h2>
+    <p>নিজের পছন্দমতো পোস্টার তৈরি করুন সহজেই।</p>
+    <button onclick="showPage('editor')">✦ পোস্টার তৈরি করুন</button>
+  </div>
+  <h3>পোস্টারের ধরন</h3>
+  <div class="card">
+    <div class="row">
+      <button onclick="choose('ইসলামিক পোস্টার')">ইসলামিক</button>
+      <button onclick="choose('নিউজ কার্ড')">নিউজ কার্ড</button>
+    </div>
+    <br>
+    <div class="row">
+      <button onclick="choose('বিজ্ঞাপন')">বিজ্ঞাপন</button>
+      <button onclick="choose('সাহিত্য পোস্টার')">সাহিত্য</button>
+    </div>
+    <br>
+    <div class="row">
+      <button onclick="choose('জন্মদিন পোস্টার')">জন্মদিন</button>
+      <button onclick="choose('ফেসবুক পোস্ট')">ফেসবুক পোস্ট</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>IT সম্পর্কে</h3>
+    <p>IT Poster Studio</p>
+    <small>অ্যাপ নির্মাতা: ইস্রাফিল তানিম</small>
+  </div>
+</section>
+
+<section id="editor" class="hidden">
+  <h3>পোস্টার এডিটর</h3>
+  <div class="card">
+    <label>পোস্টারের ধরন</label>
+    <input id="category" value="সাহিত্য পোস্টার">
+    <label>প্রধান শিরোনাম</label>
+    <textarea id="heading">আপনার সৃজনশীলতার প্রকাশ</textarea>
+    <label>বিস্তারিত লেখা</label>
+    <textarea id="description">আপনার পছন্দের কবিতা, উক্তি অথবা বার্তা এখানে লিখুন।</textarea>
+    <label>নাম / স্বাক্ষর</label>
+    <input id="signature" value="— ইস্রাফিল তানিম">
+    <label>লেখার রং</label>
+    <input type="color" id="textColor" value="#ffffff">
+    <label>ব্যাকগ্রাউন্ডের রং</label>
+    <input type="color" id="bgColor" value="#173b2b">
+    <label>লেখার সাইজ</label>
+    <input type="range" id="fontSize" min="20" max="65" value="42">
+    <label>নিজের ছবি যোগ করুন</label>
+    <input type="file" id="photo" accept="image/*">
+    <img id="imagePreview">
+    <div class="row">
+      <button onclick="render()">প্রিভিউ দেখুন</button>
+      <button class="gold" onclick="downloadPoster()">PNG ডাউনলোড</button>
+    </div>
+  </div>
+  <h3>পোস্টারের নমুনা</h3>
+  <div id="poster"><canvas id="canvas" width="800" height="1000"></canvas></div>
+  <button class="secondary" onclick="showPage('home')">← হোমে ফিরে যান</button>
+</section>
+
+<section id="ai" class="hidden">
+  <h3>AI লেখা সহকারী</h3>
+  <div class="card">
+    <p>কবিতা, গল্প, উক্তি ও ক্যাপশনের জন্য বিষয় লিখুন।</p>
+    <textarea id="topic" placeholder="যেমন: বৃষ্টির দিনে একাকিত্ব"></textarea>
+    <label>লেখার ধরন</label>
+    <select id="writingType">
+      <option>কবিতা</option>
+      <option>ছোট গল্প</option>
+      <option>উক্তি</option>
+      <option>ফেসবুক ক্যাপশন</option>
+      <option>বিজ্ঞাপনের লেখা</option>
+    </select>
+    <button onclick="makePrompt()">লেখার নির্দেশনা তৈরি করুন</button>
+    <textarea id="promptOutput" placeholder="এখানে নির্দেশনা তৈরি হবে"></textarea>
+    <button class="secondary" onclick="copyPrompt()">কপি করুন</button>
+    <small>এটি আপাতত নির্দেশনা তৈরির সুবিধা। প্রকৃত AI উত্তর পেতে নিরাপদ API সংযোগ পরবর্তী সংস্করণে যোগ করতে হবে।</small>
+  </div>
+</section>
+
+<section id="works" class="hidden">
+  <h3>আমার কাজ</h3>
+  <div class="card">
+    <p>আপনার তৈরি পোস্টার ডাউনলোড করে ফোনে সংরক্ষণ করুন।</p>
+    <button onclick="showPage('editor')">নতুন পোস্টার তৈরি করুন</button>
+  </div>
+</section>
+
+<section id="settings" class="hidden">
+  <h3>সেটিংস</h3>
+  <div class="card">
+    <p><b>IT Poster Studio</b></p>
+    <p>নির্মাতা: ইস্রাফিল তানিম</p>
+    <p>ভাষা: বাংলা</p>
+    <button class="secondary" onclick="document.body.style.background='#eee'">হালকা থিম</button>
+    <button class="secondary" onclick="document.body.style.background='#ddd'">ডার্ক-ধাঁচের থিম</button>
+  </div>
+</section>
+</main>
+
+<nav>
+  <button onclick="showPage('home')">⌂<br>হোম</button>
+  <button onclick="showPage('editor')">✎<br>ডিজাইন</button>
+  <button onclick="showPage('ai')">✦<br>AI লেখা</button>
+  <button onclick="showPage('works')">▣<br>আমার কাজ</button>
+  <button onclick="showPage('settings')">⚙<br>সেটিংস</button>
+</nav>
+
+<script>
+const ids=['home','editor','ai','works','settings'];
+function showPage(page){
+ ids.forEach(id=>document.getElementById(id).classList.toggle('hidden',id!==page));
+ if(page==='editor')render();
+ window.scrollTo(0,0);
+}
+function choose(name){
+ document.getElementById('category').value=name;
+ showPage('editor');
+}
+let uploadedImage=null;
+document.getElementById('photo').addEventListener('change',function(e){
+ const file=e.target.files[0];
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=function(){
+ uploadedImage=new Image();
+ uploadedImage.onload=function(){
+ const p=document.getElementById('imagePreview');
+ p.src=reader.result;p.style.display='block';render();
+ };
+ uploadedImage.src=reader.result;
+ };
+ reader.readAsDataURL(file);
+});
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+ const words=text.split(/\s+/);let line='';
+ for(let n=0;n<words.length;n++){
+  let test=line+words[n]+' ';
+  if(ctx.measureText(test).width>maxWidth&&n>0){
+   ctx.fillText(line,x,y);line=words[n]+' ';y+=lineHeight;
+  }else line=test;
+ }
+ ctx.fillText(line,x,y);
+ return y;
+}
+function render(){
+ const c=document.getElementById('canvas'),ctx=c.getContext('2d');
+ ctx.fillStyle=document.getElementById('bgColor').value;
+ ctx.fillRect(0,0,800,1000);
+ ctx.strokeStyle='#d5b56c';ctx.lineWidth=9;
+ ctx.strokeRect(25,25,750,950);
+ ctx.fillStyle=document.getElementById('textColor').value;
+ ctx.textAlign='center';
+ const category=document.getElementById('category').value;
+ ctx.font='bold 26px sans-serif';
+ ctx.fillText(category,400,100);
+ if(uploadedImage){
+  const maxW=300,maxH=230;
+  let w=uploadedImage.width,h=uploadedImage.height;
+  const scale=Math.min(maxW/w,maxH/h);
+  w*=scale;h*=scale;
+  ctx.drawImage(uploadedImage,400-w/2,145,w,h);
+ }
+ let y=uploadedImage?440:340;
+ const size=Number(document.getElementById('fontSize').value);
+ ctx.font='bold '+size+'px sans-serif';
+ y=wrapText(ctx,document.getElementById('heading').value,400,y,650,size*1.5);
+ y+=35;
+ ctx.font='30px sans-serif';
+ const lines=document.getElementById('description').value.split('\n');
+ lines.forEach(line=>{
+  y=wrapText(ctx,line,400,y,630,48)+48;
+ });
+ ctx.font='bold 27px sans-serif';
+ ctx.fillText(document.getElementById('signature').value,400,900);
+}
+['heading','description','signature','textColor','bgColor','fontSize','category'].forEach(id=>{
+ document.getElementById(id).addEventListener('input',render);
+});
+function downloadPoster(){
+ render();
+ const link=document.createElement('a');
+ link.download='IT-Poster-Studio.png';
+ link.href=document.getElementById('canvas').toDataURL('image/png');
+ link.click();
+}
+function makePrompt(){
+ const topic=document.getElementById('topic').value.trim();
+ if(!topic){alert('আগে একটি বিষয় লিখুন');return;}
+ const type=document.getElementById('writingType').value;
+ document.getElementById('promptOutput').value=
+ 'বাংলা ভাষায় একটি সুন্দর '+type+' লিখুন। বিষয়: '+topic+
+ '। ভাষা হবে সুন্দর, মৌলিক ও সাবলীল। লেখার শেষে লিখবেন: — ইস্রাফিল তানিম';
+}
+function copyPrompt(){
+ const t=document.getElementById('promptOutput');
+ t.select();document.execCommand('copy');alert('কপি হয়েছে');
+}
+render();
+</script>
+</body>
+</html>
